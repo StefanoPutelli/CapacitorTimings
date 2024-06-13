@@ -19,7 +19,9 @@ def write_data(data, file_path, output_path):
     if(not os.path.exists(output_path)):
         os.makedirs(output_path)
     for d in range(0, len(data)):
-        data[d].to_csv(output_path + str(d) + "_" + file_path, index=False, header=False)
+        #set header as timestamp, SMP, MAIN
+        data[d].columns = ['timestamp', 'SMP', 'MAIN']
+        data[d].to_csv(output_path + str(d) + "_" + file_path, index=False)
 
 #divide data when fisrt comunn of next line delta is greater than 0.1
 def divide_data(data):
