@@ -34,17 +34,41 @@ def divide_data(data):
     div_data.append(data.iloc[last_index:, :])
     return div_data
 
+def calculate_time(data):
+    smp_start_time = 0
+    smp_timings = []
+    main_time = abs(data.iloc[-1, 0] - data.iloc[0, 0])
+    for i in range(0, len(data)):
+        if(smp_start_time == 0):
+            if(data.iloc[i, 1] == 1):
+                smp_start_time = data.iloc[i, 0]
+        else:
+            if(data.iloc[i, 1] == 0):
+                smp_timings.append(abs(smp_start_time - data.iloc[i, 0]))
+                smp_start_time = 0
 
-def start(file):
+    return smp_timings, main_time
+
+
+
+def start_analysis(file):
     data = load_data(DATA_PATH + file)
     data = remove_zero(data)
     divdata = divide_data(data)
+    for i in range(0, len(divdata)):
+        smp_timings, main_time = calculate_time(divdata[i])
+        smp_average = sum(smp_timings) / len(smp_timings)
     write_data(divdata, file, OUTPUT_PATH + file[:-4] + "/")
+    return smp_average, main_time
 
 if __name__ == '__main__':
     #iterate in all files inside data folder
+
     for file in os.listdir(DATA_PATH):
-        start(file)
+        smp_average, main_time = start_analysis(file)
+        print("SMP average time: " + str(smp_average))
+        print("Main time: " + str(main_time))
         print(file + " done")
+
     print("All files done")
 
