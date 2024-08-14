@@ -10,6 +10,8 @@ DATA_PATH = 'data/'
 LOW_TH = 2.0
 HIGH_TH = 2.8
 
+INCOMING_VOLTAGE = 3
+
 def convert_to_scientific_notation(value_str):
     # Definire i fattori di conversione per i vari prefissi
     conversion_factors = {
@@ -94,10 +96,10 @@ def calculate_time(data):
     # main_time = abs(data.iloc[-1, 0] - data.iloc[0, 0])
     for i in range(0, len(data)):
         if(smp_start_time == -9999):
-            if(data[i][2] == 1):
+            if(data[i][2] == 0):
                 smp_start_time = data[i][0]
         else:
-            if(data[i][2] == 0):
+            if(data[i][2] == 1):
                 smp_timings.append(abs(smp_start_time - data[i][0]))
                 smp_start_time = -9999
 
@@ -135,8 +137,10 @@ if __name__ == '__main__':
         C = convert_to_scientific_notation(file.split("-")[1][:-1])
         V = calculate_V(LOW_TH, HIGH_TH, smp_average, R, C)
         print("V: " + str(V))
+        print("R: " + str(R))
+        print("C: " + str(C))
         power_predicted = pow(V, 2) / R
-        actual_power = pow(3.3, 2) / R  # Calculate actual power
+        actual_power = pow(INCOMING_VOLTAGE, 2) / R  # Calculate actual power
         print("P predicted: " + str(power_predicted))
         print("P actual: " + str(actual_power))
         accuracy = (actual_power - abs(power_predicted - actual_power)) / actual_power * 100
